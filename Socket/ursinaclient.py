@@ -18,7 +18,7 @@ class Player(Entity):
         self.model = 'circle'
         self.scale = 0.25
 
-otherPlayer = Player(color=color.blue,x=-0.5,y=-0.5)
+
 
 #########################
 ###Socket Server Stuff###
@@ -29,8 +29,8 @@ client_socket.connect((HOST, PORT))
 
 # Receive client ID from the server
 client_id = client_socket.recv(1024).decode('utf-8')
-print(f'Client:{client_id}')
-
+print(f'Client: {client_id}')
+print("Raw Client: " + client_id)
 def receive_messages():
     while True:
         # Receive incoming message from the server
@@ -50,27 +50,18 @@ receive_thread.start()
 #################
 
 player = Player(color=color.red,x=0.5,y=0.5)
-
-#Variables
-positionCooldownSpeed = 2
-positionCooldown = 0
-
-def input(key):
-    if key == 'g':
-        print(f"OtherPlayer:{otherPlayer.position}")
-    if key == 'f':
-        print(f'Player:{player.position}')
+otherPlayer = Player(color=color.blue,x=-0.5,y=-0.5)
 
 def update():
-    global positionCooldown,positionCooldownSpeed
-    positionCooldown += time.dt
-    if positionCooldown >= positionCooldownSpeed:
-        positionCooldown = 0
-        print(player.position)
-        # Send message to the server
-        position = str(player.position)
-        client_socket.send(position.encode('utf-8'))
-    pma.player_movement(player, 2)
+    if client_id == str(1):
+        pma.player_movement(player, 2)
+        playerOnePos = str(player.position)
+        client_socket.send(playerOnePos.encode('utf-8'))
+    elif client_id == str(2):
+        pma.player_movement(otherPlayer, 2)
+        playerTwoPos = str(otherPlayer.position)
+        client_socket.send(playerTwoPos.encode('utf-8'))
+
 
 
 app.run()

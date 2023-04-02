@@ -20,7 +20,7 @@ clients = []
 # Function to handle incoming client connections
 def handle_client(sock, addr):
     # Send client ID to the client
-    client_id = "Client ID: " + str(len(clients) + 1)
+    client_id = str(len(clients) + 1)
     sock.send(client_id.encode('utf-8'))
 
     # Add the client socket to the list of connected clients
@@ -37,6 +37,7 @@ def handle_client(sock, addr):
                 for client in clients:
                     if client != sock:
                         client.send(message)
+            print(message)
         except ConnectionResetError:
             # Handle case when client disconnects
             clients.remove(sock)
