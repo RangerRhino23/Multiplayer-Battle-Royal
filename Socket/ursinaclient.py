@@ -37,8 +37,11 @@ def receive_messages():
         message = client_socket.recv(1024)
         if message:
             otherPosition = message.decode('utf-8')
-            print('updating otherPlayers position')
-            otherPlayer.position = otherPosition
+            byte_str = otherPosition
+            final_str = byte_str[1:] if byte_str.startswith('b') else byte_str
+            print(final_str)
+            player.position = final_str
+    
 
 # Create a separate thread to receive messages from the server
 receive_thread = threading.Thread(target=receive_messages)
@@ -55,8 +58,8 @@ otherPlayer = Player(color=color.blue,x=-0.5,y=-0.5)
 def update():
     if client_id == str(1):
         pma.player_movement(player, 2)
-        playerOnePos = str(player.position)
-        client_socket.send(playerOnePos.encode('utf-8'))
+        #playerOnePos = str(player.position)
+        #client_socket.send(playerOnePos.encode('utf-8'))
     elif client_id == str(2):
         pma.player_movement(otherPlayer, 2)
         playerTwoPos = str(otherPlayer.position)
