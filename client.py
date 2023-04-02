@@ -1,21 +1,24 @@
 from ursina import *
 from random import *
-from ursinanetworking import *
-import assets.APIs.player_moevement_api as pma
+from ursina.prefabs.first_person_controller import FirstPersonController
+import  assets.APIs.player_moevement_api as pma
 
+from ursinanetworking import *
 
 
 App = Ursina()
-Client = UrsinaNetworkingClient('localhost',25565)
+Client = UrsinaNetworkingClient("localhost", 25565)
 Easy = EasyUrsinaNetworkingClient(Client)
 window.borderless = False
 
 sky = Sky()
+ground=Entity(model='plane',texture='grass',scale=1000,texture_scale=(31,31),collider='box')
 
-Players = {}
-PlayersTargetPos={}
+Players = {} #The players of the game
+PlayersTargetPos={} #Player position updating 
+#PlayerTargetHpr={} #Player rotation updating
 
-SelfId = -1
+SelfId = -1 #decalres the id of players
 
 @Client.event
 def GetId(Id):
@@ -30,7 +33,9 @@ def onReplicatedVariableCreated(variable):
     variable_type = variable.content["type"]
 
     if variable_type == "player": #If its a player set all this up
-        PlayersTargetPos[variable_name] = Vec2(0,0)
+        PlayersTargetPos[variable_name] = Vec3(0, 0, 0)
+        #PlayerTargetHpr[variable_name] = Vec3(0,0,0)
+        Players[variable_name] = Entity(parent = scene,position = (0,0,0),origin_y=2,rotation=(0,0,0),model='circle', scale=(0.25),color = color.white,highlight_color = color.white)
         if SelfId == int(variable.content["id"]):
             Players[variable_name].color = color.red
             Players[variable_name].visible = False
@@ -38,7 +43,7 @@ def onReplicatedVariableCreated(variable):
 @Easy.event
 def onReplicatedVariableUpdated(variable):
     PlayersTargetPos[variable.name] = variable.content["position"]
-
+    #PlayerTargetHpr[variable.name] = variable.content["rotation"]
 @Easy.event
 def onReplicatedVariableRemoved(variable): #Doesn't really work atm but removes the player when disconneted 
     variable_name = variable.name
@@ -47,19 +52,21 @@ def onReplicatedVariableRemoved(variable): #Doesn't really work atm but removes 
         destroy(Players[variable_name])
         del Players[variable_name]
 
-Ply = Entity(model='circle', scale=0.25)
+Ply = Entity(parent=scene,position = (0,2,0),origin_y=2,rotation=(0,0,0),model='circle', scale=(0.25),color = color.white,highlight_color = color.white) #FirstPersonController(mouse_sensitivity=(155, 155))
 
 def Messages(key):
-    Client.send_message("MyPosition", tuple(Ply.position))
+    Client.send_message("MyPosition", tuple(Ply.position + (0, 0, 0)))
+    #Client.send_message("MyRotation", tuple(Ply.rotation + (0,0,0)))
 
 Entity(input=Messages)
 def update():
-    pma.player_movement(Ply, 2)
+    pma.player_movement(Ply,2)
     if Ply.position[1] < -5:
         Ply.position = (randrange(0, 15), 10, randrange(0, 15))
     for p in Players:
         try:
-            Players[p].position += (Vec2(PlayersTargetPos[p]) - Players[p].position) / 25
+            Players[p].position += (Vec3(PlayersTargetPos[p]) - Players[p].position) / 25
+            #Players[p].rotation += (Vec3(PlayerTargetHpr[p]) - Players[p].rotation) / 25
         except Exception as e: print(e)
     
     Easy.process_net_events()
