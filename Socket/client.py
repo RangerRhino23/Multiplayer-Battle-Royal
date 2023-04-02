@@ -13,7 +13,7 @@ client_socket.connect((HOST, PORT))
 
 # Receive client ID from the server
 client_id = client_socket.recv(1024).decode('utf-8')
-print(client_id)
+print(f'Client:{client_id}')
 
 def receive_messages():
     while True:

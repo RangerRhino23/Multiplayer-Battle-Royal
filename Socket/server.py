@@ -30,6 +30,8 @@ def handle_client(sock, addr):
         try:
             # Receive incoming message from the client
             message = sock.recv(1024)
+            
+            #if recieve any message
             if message:
                 # Send message to all connected clients except the sender
                 for client in clients:
