@@ -3,7 +3,7 @@ import threading
 
 # Define host and port to connect to
 HOST = 'localhost'
-PORT = 25565
+PORT = 12343
 
 # Create a socket object
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

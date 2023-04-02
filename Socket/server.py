@@ -3,7 +3,7 @@ import threading
 
 # Define host and port to listen on
 HOST = 'localhost'
-PORT = 25565
+PORT = 12343
 
 # Create a socket object
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -19,12 +19,15 @@ clients = []
 
 # Function to handle incoming client connections
 def handle_client(sock, addr):
-    # Send client ID to the client
-    client_id = str(len(clients) + 1)
-    sock.send(client_id.encode('utf-8'))
+    # Ask the client to set a username
+    sock.send('Enter a username: '.encode('utf-8'))
+    username = sock.recv(1024).strip().decode('utf-8')
+    # Send a welcome message to the client with their username
+    welcome_message = f'Welcome to the chat, {username}!'
+    sock.send(welcome_message.encode('utf-8'))
 
-    # Add the client socket to the list of connected clients
-    clients.append(sock)
+    # Add the client socket and username to the list of connected clients
+    clients.append((sock, username))
 
     while True:
         try:
