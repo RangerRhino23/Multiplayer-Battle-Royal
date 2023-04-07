@@ -2,7 +2,7 @@ import socket
 import threading
 
 # Define host and port to listen on
-HOST = 'localhost'
+HOST = '192.168.2.151'
 PORT = 25565
 
 # Create a socket object
@@ -21,7 +21,7 @@ clients = []
 # Function to handle incoming client connections
 def handle_client(sock, addr):
     # Send client ID to the client
-    client_id = str(len(clients) + 1)
+    client_id = "Client ID: " + str(len(clients) + 1)
     sock.send(client_id.encode('utf-8'))
 
     # Add the client socket to the list of connected clients
