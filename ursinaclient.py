@@ -4,7 +4,7 @@ from ursina import *
 import assets.APIs.player_moevement_api as pma
 
 # Define host and port to connect to
-HOST = '192.168.2.151'
+HOST = 'localhost'
 PORT = 25565
 
 window.borderless = False
@@ -19,7 +19,7 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((HOST, PORT))
 
 # Receive client ID from the server
-client_id = client_socket.recv(1024).decode('utf-8')
+client_id = client_socket.recv(4096).decode('utf-8')
 print(f'Client:{client_id}')
 
 def receive_messages():

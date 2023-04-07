@@ -2,7 +2,7 @@ import socket
 import threading
 
 # Define host and port to listen on
-HOST = '192.168.2.151'
+HOST = 'localhost'
 PORT = 25565
 
 # Create a socket object
@@ -30,7 +30,7 @@ def handle_client(sock, addr):
     while True:
         try:
             # Receive incoming message from the client
-            message = sock.recv(1024)
+            message = sock.recv(4096)
             
             if message:
                 for client in clients:
