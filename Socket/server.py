@@ -10,6 +10,7 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to a specific address and port
 server_socket.bind((HOST, PORT))
+print(f'Started Server on {HOST}:{PORT}')
 
 # Listen for incoming connections
 server_socket.listen()
@@ -31,12 +32,11 @@ def handle_client(sock, addr):
             # Receive incoming message from the client
             message = sock.recv(1024)
             
-            #if recieve any message
             if message:
-                # Send message to all connected clients except the sender
                 for client in clients:
                     if client != sock:
                         client.send(message)
+                        
         except ConnectionResetError:
             # Handle case when client disconnects
             clients.remove(sock)
@@ -49,6 +49,7 @@ def listen_for_clients():
         # Wait for incoming client connections
         sock, addr = server_socket.accept()
         print(f'Client {addr} connected')
+        
 
         # Create a new thread to handle the incoming client connection
         client_thread = threading.Thread(target=handle_client, args=(sock, addr))
